@@ -1,6 +1,6 @@
 # Library catalog data layer
 
-This starter scaffolds a NestJS API and Prisma data layer for a library catalog using PostgreSQL. It includes authentication, role-protected catalog writes, book search/filter/pagination, genres, books, users, and an optional review relationship. The app entry point is `api/src/main.ts`; feature modules are in `api/src/auth`, `api/src/books`, and `api/src/genres`.
+This project contains a NestJS API and Prisma data layer for a library catalog using PostgreSQL. It includes authentication, role-protected catalog writes, book search/filter/pagination, genres, books, and an optional review relationship. The app entry point is `src/main.ts`; feature modules are in `src/auth`, `src/books`, and `src/genres`.
 
 ## Requirements
 
@@ -10,15 +10,13 @@ This starter scaffolds a NestJS API and Prisma data layer for a library catalog 
 
 ## Configure and run
 
-From Git Bash, enter the API directory:
+From the repository root:
 
 ```bash
-cd api
 pnpm install
-cp .env.example .env
 ```
 
-Edit `api/.env` and replace the placeholder with your hosted PostgreSQL connection string. Keep `.env` private and out of Git.
+Create a `.env` file with `DATABASE_URL` set to your PostgreSQL connection string and `JWT_SECRET` set to a random secret of at least 32 bytes. Keep `.env` private and out of Git.
 
 Generate Prisma Client and create/apply the development migration:
 
@@ -27,14 +25,14 @@ pnpm db:generate
 pnpm db:migrate --name catalog-core
 ```
 
-The migration command is included for you to run against your hosted PostgreSQL database. It has not been run as part of this scaffold. Before seeding, set `JWT_SECRET` in `.env` to a random secret of at least 32 bytes. To create a librarian account during seeding, set both `SEED_LIBRARIAN_EMAIL` and `SEED_LIBRARIAN_PASSWORD` (12–72 UTF-8 bytes). Leave both blank to skip creating one. Registration always creates `PATRON` accounts; it never accepts a role from the request body. After the migration succeeds, seed the catalog and start the NestJS API:
+To create a librarian account during seeding, set both `SEED_LIBRARIAN_EMAIL` and `SEED_LIBRARIAN_PASSWORD` (12–72 UTF-8 bytes). Leave both blank to skip creating one. Registration always creates `PATRON` accounts; it never accepts a role from the request body. After the migration succeeds, seed the catalog and start the NestJS API:
 
 ```bash
 pnpm db:seed
 pnpm start:dev
 ```
 
-The API listens on port `3000` by default. Set `PORT` in `.env` to change it. Import `docs/postman_collection.json` into Postman. Use the seeded librarian credentials with the collection's `loginEmail` and `loginPassword` variables to exercise protected catalog write endpoints. Supply real IDs for the `genreId` and `bookId` collection variables.
+The API listens on port `3000` by default. Set `PORT` in `.env` to change it. Use the seeded librarian credentials to exercise protected catalog write endpoints. Registration creates patron accounts only; librarian access must be provisioned by a trusted administrator or the seed script.
 
 ## API routes
 
@@ -42,11 +40,10 @@ The API listens on port `3000` by default. Set `PORT` in `.env` to change it. Im
 |---|---|---|
 | `POST` | `/auth/register` | Register a patron and receive a JWT |
 | `POST` | `/auth/login` | Log in and receive a JWT |
-| `GET` | `/users/profile` | Current user profile; bearer token required |
 | `GET` | `/genres` | List genres |
 | `GET` | `/genres/:id` | Read one genre |
 | `POST`, `PATCH`, `DELETE` | `/genres` or `/genres/:id` | Genre CRUD writes; librarian bearer token required |
-| `GET` | `/books?genreId=&search=&page=&limit=` | Filter by genre, search title/author, paginate |
+| `GET` | `/books?genreId=&search=&page=&limit=` | Filter by genre, search title/author, paginate (limit max 100) |
 | `GET` | `/books/:id` | Read one book |
 | `POST`, `PATCH`, `DELETE` | `/books` or `/books/:id` | Book CRUD writes; librarian bearer token required |
 
@@ -60,7 +57,7 @@ pnpm db:seed
 
 The seed script uses `upsert`, so it can be run repeatedly without duplicating the genre or book rows. It uses deterministic placeholder ISBN values for this sample catalog; replace them with real ISBNs before using the data in a real library.
 
-The Prisma Client generator writes generated code to `api/generated/prisma`; that folder is build output and should not be committed. Commit migration files created under `api/prisma/migrations/`.
+The Prisma Client generator writes generated code to `generated/prisma`; that folder is build output and should not be committed. Commit migration files created under `prisma/migrations/`.
 
 ## Schema Decisions
 

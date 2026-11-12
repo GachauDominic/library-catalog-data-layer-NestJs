@@ -1,4 +1,5 @@
 import {
+  IsDateString,
   IsInt,
   IsOptional,
   IsString,
@@ -30,4 +31,13 @@ export class CreateBookDto {
 
   @IsUUID()
   genreId!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(5000)
+  description?: string | null;
+
+  @IsOptional()
+  @IsDateString()
+  publishedAt?: string | null;
 }

@@ -1,4 +1,5 @@
 import {
+  IsDateString,
   IsInt,
   IsOptional,
   IsString,
@@ -35,4 +36,13 @@ export class UpdateBookDto {
   @ValidateIf((_object, value) => value !== undefined)
   @IsUUID()
   genreId?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(5000)
+  description?: string | null;
+
+  @IsOptional()
+  @IsDateString()
+  publishedAt?: string | null;
 }
