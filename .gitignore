@@ -1,6 +1,9 @@
-node_modules/
-dist/
-.env
-.env.*
-!.env.example
-generated/
+﻿# API dependencies and generated output
+/node_modules/
+/dist/
+/generated/
+
+# Backend credentials
+/.env
+/.env.*
+!/.env.example
