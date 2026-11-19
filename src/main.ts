@@ -15,7 +15,10 @@ async function bootstrap(): Promise<void> {
   );
   app.enableCors();
   app.enableShutdownHooks();
-  await app.listen(Number(process.env.PORT ?? 3000));
+  const port = Number(process.env.PORT ?? 3000);
+  await app.listen(port);
+  const url = `http://localhost:${port}`;
+  console.log(`Server started and running at ${url}`);
 }
 
 void bootstrap();
