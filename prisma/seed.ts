@@ -1,16 +1,7 @@
 import "dotenv/config";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient, Role } from "../generated/prisma/client.js";
+import { prisma } from "../src/prisma/db.js";
+import { Role } from "../src/auth/role.js";
 import * as bcrypt from "bcrypt";
-
-const connectionString = process.env.DATABASE_URL;
-if (!connectionString) {
-  throw new Error("DATABASE_URL must be set before seeding.");
-}
-
-const prisma = new PrismaClient({
-  adapter: new PrismaPg({ connectionString }),
-});
 
 const catalog = {
   Fiction: [
@@ -41,18 +32,18 @@ const catalog = {
 
 async function main() {
   for (const [genreName, books] of Object.entries(catalog)) {
-    const genre = await prisma.genre.upsert({
-      where: { name: genreName },
-      update: {},
+    const genre = await prisma.orm.public.Genre.upsert({
       create: { name: genreName },
+      update: { name: genreName },
+      conflictOn: { name: genreName },
     });
 
     for (const [index, [title, author, description]] of books.entries()) {
       const isbn = `978000000${String(Object.keys(catalog).indexOf(genreName) * 4 + index + 1).padStart(4, "0")}`;
-      await prisma.book.upsert({
-        where: { isbn },
-        update: { title, author, description, genreId: genre.id, totalCopies: 1 },
+      await prisma.orm.public.Book.upsert({
         create: { isbn, title, author, description, genreId: genre.id, totalCopies: 1 },
+        update: { title, author, description, genreId: genre.id, totalCopies: 1 },
+        conflictOn: { isbn },
       });
     }
   }
@@ -69,15 +60,15 @@ async function main() {
       throw new Error("SEED_LIBRARIAN_PASSWORD must be 12–72 UTF-8 bytes.");
     }
     const passwordHash = await bcrypt.hash(librarianPassword, 12);
-    await prisma.user.upsert({
-      where: { email: librarianEmail },
-      update: { name: "Catalog Librarian", passwordHash, role: Role.LIBRARIAN },
+    await prisma.orm.public.User.upsert({
       create: {
         email: librarianEmail,
         name: "Catalog Librarian",
         passwordHash,
         role: Role.LIBRARIAN,
       },
+      update: { name: "Catalog Librarian", passwordHash, role: Role.LIBRARIAN },
+      conflictOn: { email: librarianEmail },
     });
     console.log(`Seeded librarian account ${librarianEmail}.`);
   }
@@ -91,5 +82,5 @@ main()
     process.exitCode = 1;
   })
   .finally(async () => {
-    await prisma.$disconnect();
+    await prisma.close();
   });

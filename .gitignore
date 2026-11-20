@@ -1,7 +1,6 @@
-﻿# API dependencies and generated output
+﻿# API dependencies and build output
 /node_modules/
 /dist/
-/generated/
 
 # Backend credentials
 /.env

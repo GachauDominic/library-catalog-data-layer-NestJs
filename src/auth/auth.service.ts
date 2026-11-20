@@ -5,9 +5,9 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { Prisma, Role } from "../../generated/prisma/client.js";
 import * as bcrypt from "bcrypt";
 import { PrismaService } from "../prisma/prisma.service.js";
+import { Role, type Role as UserRole } from "./role.js";
 import { LoginDto } from "./dto/login.dto.js";
 import { RegisterDto } from "./dto/register.dto.js";
 
@@ -25,33 +25,26 @@ export class AuthService {
 
     const email = dto.email.trim().toLowerCase();
     const passwordHash = await bcrypt.hash(dto.password, 12);
-    let user: { id: string; role: Role };
     try {
-      user = await this.prisma.user.create({
-        data: {
-          email,
-          name: dto.name.trim(),
-          passwordHash,
-          role: Role.PATRON,
-        },
+      const user = await this.prisma.client.orm.public.User.create({
+        email,
+        name: dto.name.trim(),
+        passwordHash,
+        role: Role.PATRON,
       });
+      return this.issueToken(user.id, user.role);
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === "P2002"
-      ) {
+      if (isUniqueViolation(error)) {
         throw new ConflictException("An account with this email already exists.");
       }
       throw error;
     }
-
-    return this.issueToken(user.id, user.role);
   }
 
   async login(dto: LoginDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: dto.email.trim().toLowerCase() },
-    });
+    const user = await this.prisma.client.orm.public.User
+      .where({ email: dto.email.trim().toLowerCase() })
+      .first();
     if (
       !user ||
       Buffer.byteLength(dto.password, "utf8") > 72 ||
@@ -62,9 +55,20 @@ export class AuthService {
     return this.issueToken(user.id, user.role);
   }
 
-  private issueToken(userId: string, role: Role) {
+  private issueToken(userId: string, role: UserRole) {
     return {
       access_token: this.jwt.sign({ sub: userId, role }),
     };
   }
+}
+
+function isUniqueViolation(error: unknown): boolean {
+  let current = error;
+  for (let depth = 0; depth < 4 && current instanceof Error; depth += 1) {
+    if ((current as Error & { code?: string }).code === "23505") {
+      return true;
+    }
+    current = (current as Error & { cause?: unknown }).cause;
+  }
+  return false;
 }

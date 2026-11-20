@@ -2,13 +2,25 @@
   "name": "library-catalog-api-data-layer",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@12.21.0",
+  "engines": {
+    "node": "^22.18.0 || ^24.11.0 || >=26.0.0"
+  },
   "scripts": {
     "build": "nest build",
     "start": "node dist/src/main.js",
     "start:dev": "nest start --watch",
-    "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
-    "db:seed": "prisma db seed"
+    "db:contract:emit": "prisma contract emit",
+    "db:migration:plan": "prisma migration plan",
+    "db:migration:list": "prisma migration list",
+    "db:migration:check": "prisma migration check",
+    "db:migration:status": "prisma migration status",
+    "db:migration:show": "prisma migration show",
+    "db:sign": "prisma db sign",
+    "db:migrate": "prisma db migrate --advance-ref db",
+    "db:migrate:deploy": "prisma db migrate",
+    "db:verify": "prisma db verify",
+    "db:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^12.5.1",
@@ -16,14 +28,12 @@
     "@nestjs/jwt": "^12.0.5",
     "@nestjs/passport": "^12.0.2",
     "@nestjs/platform-express": "^12.5.1",
-    "@prisma/adapter-pg": "^7.10.1",
-    "@prisma/client": "^7.10.1",
+    "@prisma/orm-postgres": "8.0.0-rc.24",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
-    "pg": "^8.23.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2"
   },
@@ -33,7 +43,6 @@
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^26.6.6",
     "@types/passport-jwt": "^4.0.1",
-    "@types/pg": "^8.23.1",
     "dotenv": "^18.0.10",
     "prisma": "^8.0.0-rc.34",
     "tsx": "^4.23.15",

@@ -15,7 +15,7 @@ import { GenresService } from "./genres.service.js";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard.js";
 import { RolesGuard } from "../auth/guards/roles.guard.js";
 import { Roles } from "../auth/roles.decorator.js";
-import { Role } from "../../generated/prisma/client.js";
+import { Role } from "../auth/role.js";
 
 @Controller("genres")
 export class GenresController {

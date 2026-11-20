@@ -1,0 +1,62 @@
+[
+  {
+    "id": "column.public.Book.sourceUrl",
+    "label": "Add column \"sourceUrl\" to \"Book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "sourceUrl",
+        "table": "Book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"sourceUrl\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Book",
+          "sourceUrl"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"sourceUrl\" on \"Book\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"sourceUrl\"",
+        "sql": "ALTER TABLE \"public\".\"Book\" ADD COLUMN \"sourceUrl\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"sourceUrl\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Book",
+          "sourceUrl"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"sourceUrl\" on \"Book\""
+        }
+      },
+      {
+        "description": "verify column \"sourceUrl\" has type \"text\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Book",
+          "sourceUrl",
+          "text"
+        ]
+      }
+    ]
+  }
+]

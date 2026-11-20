@@ -4,7 +4,7 @@ import {
   Injectable,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { Role } from "../../../generated/prisma/client.js";
+import { Role } from "../role.js";
 import { ROLES_KEY } from "../roles.decorator.js";
 
 interface AuthenticatedRequest {

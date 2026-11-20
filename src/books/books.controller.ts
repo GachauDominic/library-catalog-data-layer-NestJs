@@ -10,7 +10,7 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import { Role } from "../../generated/prisma/client.js";
+import { Role } from "../auth/role.js";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard.js";
 import { RolesGuard } from "../auth/guards/roles.guard.js";
 import { Roles } from "../auth/roles.decorator.js";
@@ -24,8 +24,8 @@ export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
   @Get()
-  findAll(@Query() query: FindBooksQueryDto) {
-    return this.booksService.findAll(query);
+  async findAll(@Query() query: FindBooksQueryDto) {
+    return await this.booksService.findAll(query);
   }
 
   @Get(":id")

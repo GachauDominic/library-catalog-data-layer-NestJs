@@ -1,0 +1,382 @@
+[
+  {
+    "id": "dropIndex.Book.Book_isbn_key",
+    "label": "Drop index \"Book_isbn_key\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Book_isbn_key",
+        "table": "Book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Book_isbn_key\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Book_isbn_key\""
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "index \"Book_isbn_key\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop index \"Book_isbn_key\"",
+        "sql": "DROP INDEX \"public\".\"Book_isbn_key\"",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Book_isbn_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Book_isbn_key\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Book_isbn_key\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "dropIndex.Genre.Genre_name_key",
+    "label": "Drop index \"Genre_name_key\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Genre_name_key",
+        "table": "Genre"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Genre_name_key\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Genre_name_key\""
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "index \"Genre_name_key\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop index \"Genre_name_key\"",
+        "sql": "DROP INDEX \"public\".\"Genre_name_key\"",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Genre_name_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Genre_name_key\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Genre_name_key\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "dropIndex.Review.Review_bookId_userId_key",
+    "label": "Drop index \"Review_bookId_userId_key\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Review_bookId_userId_key",
+        "table": "Review"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Review_bookId_userId_key\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Review_bookId_userId_key\""
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "index \"Review_bookId_userId_key\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop index \"Review_bookId_userId_key\"",
+        "sql": "DROP INDEX \"public\".\"Review_bookId_userId_key\"",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Review_bookId_userId_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Review_bookId_userId_key\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Review_bookId_userId_key\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "dropIndex.User.User_email_key",
+    "label": "Drop index \"User_email_key\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "User_email_key",
+        "table": "User"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"User_email_key\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"User_email_key\""
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "index \"User_email_key\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop index \"User_email_key\"",
+        "sql": "DROP INDEX \"public\".\"User_email_key\"",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"User_email_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"User_email_key\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"User_email_key\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "unique.Book.Book_isbn_key",
+    "label": "Add unique constraint on \"Book\" (isbn)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Book_isbn_key",
+        "table": "Book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Book_isbn_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Book_isbn_key",
+          "public",
+          "\"public\".\"Book\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Book_isbn_key\" on \"Book\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Book_isbn_key\"",
+        "sql": "ALTER TABLE \"public\".\"Book\" ADD CONSTRAINT \"Book_isbn_key\" UNIQUE (\"isbn\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Book_isbn_key\" exists on (isbn)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Book_isbn_key",
+          "public",
+          "\"public\".\"Book\"",
+          "u",
+          "[\"isbn\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Genre.Genre_name_key",
+    "label": "Add unique constraint on \"Genre\" (name)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Genre_name_key",
+        "table": "Genre"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Genre_name_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Genre_name_key",
+          "public",
+          "\"public\".\"Genre\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Genre_name_key\" on \"Genre\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Genre_name_key\"",
+        "sql": "ALTER TABLE \"public\".\"Genre\" ADD CONSTRAINT \"Genre_name_key\" UNIQUE (\"name\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Genre_name_key\" exists on (name)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Genre_name_key",
+          "public",
+          "\"public\".\"Genre\"",
+          "u",
+          "[\"name\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Review.Review_bookId_userId_key",
+    "label": "Add unique constraint on \"Review\" (bookId, userId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Review_bookId_userId_key",
+        "table": "Review"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Review_bookId_userId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Review_bookId_userId_key",
+          "public",
+          "\"public\".\"Review\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Review_bookId_userId_key\" on \"Review\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Review_bookId_userId_key\"",
+        "sql": "ALTER TABLE \"public\".\"Review\" ADD CONSTRAINT \"Review_bookId_userId_key\" UNIQUE (\"bookId\", \"userId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Review_bookId_userId_key\" exists on (bookId, userId)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Review_bookId_userId_key",
+          "public",
+          "\"public\".\"Review\"",
+          "u",
+          "[\"bookId\",\"userId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.User.User_email_key",
+    "label": "Add unique constraint on \"User\" (email)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "User_email_key",
+        "table": "User"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"User_email_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "User_email_key",
+          "public",
+          "\"public\".\"User\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"User_email_key\" on \"User\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"User_email_key\"",
+        "sql": "ALTER TABLE \"public\".\"User\" ADD CONSTRAINT \"User_email_key\" UNIQUE (\"email\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"User_email_key\" exists on (email)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "User_email_key",
+          "public",
+          "\"public\".\"User\"",
+          "u",
+          "[\"email\"]"
+        ]
+      }
+    ]
+  }
+]

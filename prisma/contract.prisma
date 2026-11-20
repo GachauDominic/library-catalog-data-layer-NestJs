@@ -1,0 +1,67 @@
+// use prisma-8
+// Authoritative Prisma 8 data contract for the library catalog.
+
+namespace public {
+  model Genre {
+    id        String                       @id @onCreate(uuid())
+    name      String
+    createdAt DateTime(storage: timestamp) @default(now()) @onCreate(now())
+    updatedAt DateTime(storage: timestamp) @onCreate(now()) @onUpdate(now())
+    books     Book[]
+
+    @@unique([name], map: "Genre_name_key")
+  }
+
+  model Book {
+    id          String                        @id @onCreate(uuid())
+    isbn        String?
+    title       String
+    author      String
+    totalCopies Int                           @default(1)
+    description String?
+    sourceUrl   String?
+    publishedAt DateTime(storage: timestamp)?
+    genreId     String
+    createdAt   DateTime(storage: timestamp)  @default(now()) @onCreate(now())
+    updatedAt   DateTime(storage: timestamp)  @onCreate(now()) @onUpdate(now())
+    reviews     Review[]
+    genre       Genre                         @relation(fields: [genreId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    @@unique([isbn], map: "Book_isbn_key")
+    @@index([genreId], map: "Book_genreId_idx")
+    @@index([title], map: "Book_title_idx")
+  }
+
+  model User {
+    id           String                       @id @onCreate(uuid())
+    email        String
+    name         String
+    passwordHash String
+    role         pg.enum(Role)                @default("PATRON")
+    createdAt    DateTime(storage: timestamp) @default(now()) @onCreate(now())
+    updatedAt    DateTime(storage: timestamp) @onCreate(now()) @onUpdate(now())
+    reviews      Review[]
+
+    @@unique([email], map: "User_email_key")
+  }
+
+  model Review {
+    id        String                       @id @onCreate(uuid())
+    bookId    String
+    userId    String
+    rating    Int
+    comment   String?
+    createdAt DateTime(storage: timestamp) @default(now()) @onCreate(now())
+    updatedAt DateTime(storage: timestamp) @onCreate(now()) @onUpdate(now())
+    book      Book                         @relation(fields: [bookId], references: [id], onDelete: Cascade, onUpdate: Cascade, index: "Review_bookId_userId_key")
+    user      User                         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    @@unique([bookId, userId], map: "Review_bookId_userId_key")
+    @@index([userId], map: "Review_userId_idx")
+  }
+
+  native_enum Role {
+    PATRON = "PATRON"
+    LIBRARIAN = "LIBRARIAN"
+  }
+}

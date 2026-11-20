@@ -3,6 +3,7 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  IsUrl,
   IsUUID,
   MaxLength,
   Min,
@@ -41,6 +42,11 @@ export class UpdateBookDto {
   @IsString()
   @MaxLength(5000)
   description?: string | null;
+
+  @IsOptional()
+  @IsUrl({ protocols: ["http", "https"], require_protocol: true })
+  @MaxLength(2048)
+  sourceUrl?: string | null;
 
   @IsOptional()
   @IsDateString()
