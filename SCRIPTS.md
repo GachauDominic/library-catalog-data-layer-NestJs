@@ -1,7 +1,12 @@
 # Project scripts
 
-Run these commands from the `api` directory with pnpm. Prisma commands read
-`DATABASE_URL` from `.env` through `prisma.config.ts`.
+Run these commands from the `api` directory with pnpm. The API and Prisma CLI
+prefer `DIRECT_URL` from `.env`, then fall back to `DATABASE_URL` if it is unset.
+
+For Neon, set `DIRECT_URL` to the direct endpoint (hostname has no `-pooler`).
+The Prisma Postgres runtime sends session settings at connection startup that
+Neon's pooled endpoint rejects, so the API must use the direct endpoint. Keep
+`DATABASE_URL` as a fallback if needed. Both URLs should use `sslmode=require`.
 
 ## Application
 

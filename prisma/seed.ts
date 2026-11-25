@@ -1,7 +1,9 @@
 import "dotenv/config";
-import { prisma } from "../src/prisma/db.js";
+import { createPrismaClient } from "../src/prisma/db.js";
 import { Role } from "../src/auth/role.js";
 import * as bcrypt from "bcrypt";
+
+const prisma = createPrismaClient(process.env.DIRECT_URL ?? process.env.DATABASE_URL);
 
 const catalog = {
   Fiction: [

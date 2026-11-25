@@ -1,0 +1,119 @@
+@baseUrl = http://localhost:3000
+@seededLibrarianId = 235ef2cd-85d8-4ff1-a715-c5bac2947e9a
+
+### register an user librarian/patron
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "",
+  "password": "",
+  "name": "",
+  "role": 
+}
+
+### Log in as the seeded Librarian
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "lib@example.com",
+  "password": "lib123456DVq",
+}
+
+### Extract the token
+@token = {{login.response.body.result.token}}
+
+
+### Generate a QR using the seeded merchant's default channel
+# @name generateQr
+POST {{baseUrl}}/api/qr/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "merchantId": "fefb43c5-bef5-498a-b523-83f852142721",
+  "refNo": "0735782454",
+  "amount": 46
+}
+
+### Extract the id
+@qrId = {{generateQr.response.body.id}}
+
+
+### Fetch that QR's status
+GET {{baseUrl}}/api/qr/{{qrId}}
+Authorization: Bearer {{token}}
+
+
+### View the actual QR image
+GET {{baseUrl}}/api/qr/{{qrId}}/image
+Authorization: Bearer {{token}}
+
+
+### Create a new merchant (requires SUPER_ADMIN)
+# @name createMerchant
+POST {{baseUrl}}/api/merchants
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "businessName": "AIRTEL Credit",
+  "channelType": "PAYBILL",
+  "cpi": "220220"
+}
+
+### Extract the new merchant's id
+@merchantId = {{createMerchant.response.body.merchantId}}
+
+
+### Generate a QR for the new merchant — exactly one PAYBILL channel so far, unambiguous
+POST {{baseUrl}}/api/qr/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "merchantId": "{{merchantId}}",
+  "channelType": "PAYBILL",
+  "amount": 90
+}
+
+
+### Add a SECOND Paybill channel to that same new merchant
+# @name addSecondChannel
+POST {{baseUrl}}/api/merchants/fefb43c5-bef5-498a-b523-83f852142721/channels
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "channelType": "PAYBILL",
+  "cpi": "220220"
+}
+
+### Extract the second channel's id
+@secondChannelId = {{addSecondChannel.response.body.id}}
+
+
+### Now channelType alone is ambiguous (2 PAYBILL channels) — expect a 400
+POST {{baseUrl}}/api/qr/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "merchantId": "{{merchantId}}",
+  "channelType": "PAYBILL",
+  "amount": 66
+}
+
+
+### Disambiguate with channelId instead — this one succeeds
+POST {{baseUrl}}/api/qr/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "merchantId": "{{merchantId}}",
+  "channelId": "{{secondChannelId}}",
+  "amount": 66
+}
