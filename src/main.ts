@@ -14,7 +14,7 @@ async function bootstrap(): Promise<void> {
     }),
   );
   app.enableCors({
-    origin: "https://stacks-library-catalog.vercel.app/",
+    origin: process.env.CLIENT_URL,
     methods: ["GET", "POST", "PUT", "DELETE"],
   });
   app.enableShutdownHooks();
