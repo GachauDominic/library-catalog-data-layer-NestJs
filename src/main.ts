@@ -13,7 +13,10 @@ async function bootstrap(): Promise<void> {
       transform: true,
     }),
   );
-  app.enableCors();
+  app.enableCors({
+    origin: "https://stacks-library-catalog.vercel.app/",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  });
   app.enableShutdownHooks();
   const port = Number(process.env.PORT ?? 3000);
   await app.listen(port);
