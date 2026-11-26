@@ -4,7 +4,10 @@ import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module.js";
 
-const clientOrigins = (process.env.CLIENT_URL ?? "")
+const clientOrigins = (
+  process.env.CLIENT_URL ??
+  "https://stacks-library-catalog.vercel.app,http://localhost:5173"
+)
   .split(",")
   .map((origin) => origin.trim().replace(/\/+$/, ""))
   .filter(Boolean);
