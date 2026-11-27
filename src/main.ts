@@ -4,16 +4,15 @@ import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module.js";
 
-const clientOrigins = (
-  process.env.CLIENT_URL ??
-  "https://stacks-library-catalog.vercel.app,http://localhost:5173"
-)
+const clientOrigins = (process.env.CLIENT_URL ?? "http://localhost:5173")
   .split(",")
   .map((origin) => origin.trim().replace(/\/+$/, ""))
   .filter(Boolean);
 
 if (clientOrigins.length === 0) {
-  throw new Error("CLIENT_URL must contain at least one allowed frontend origin.");
+  throw new Error(
+    "CLIENT_URL must contain at least one allowed frontend origin.",
+  );
 }
 
 async function bootstrap(): Promise<void> {
